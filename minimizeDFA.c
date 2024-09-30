@@ -31,7 +31,7 @@ void minimize() {
     for (int i = 0; i < num_states; i++) {
         for (int j = 0; j < num_states; j++) {
             if (final_states[i] != final_states[j]) {
-                marked[i][j] = true;
+                marked[i][j] = marked[i][j] = true;
             }
         }
     }
@@ -45,7 +45,7 @@ void minimize() {
                         int t1 = transition[i][k];
                         int t2 = transition[j][k];
                         if ((t1 != -1 && t2 != -1 && marked[t1][t2]) || (t1 == -1 && t2 != -1) || (t2 == -1 && t1 != -1)) {
-                            marked[i][j] = true;
+                            marked[i][j] = marked[i][j] = true;
                             changed = true;
                             break;
                         }
