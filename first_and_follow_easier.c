@@ -22,7 +22,7 @@ int isTerminal(char symbol){
 }
 
 void addToSet(char* set, char symbol){
-    if(!strchr(set,symbol)){ //first occurence of the symbol in string set, if it fails then it return NULL
+    if(!strchr(set,symbol)){
         int len = strlen(set);
         set[len] = symbol;
         set[len + 1] = '\0';
@@ -30,7 +30,7 @@ void addToSet(char* set, char symbol){
 }
 
 
-int visited[26]; // To track if a symbol's First set is being computed
+int visited[26]; 
 
 void computeFirst(char symbol) {
     if (isTerminal(symbol)) {
@@ -38,14 +38,14 @@ void computeFirst(char symbol) {
         return;
     }
 
-    if (visited[symbol - 'A']) return; // Avoid infinite recursion
-    visited[symbol - 'A'] = 1;         // Mark symbol as visited
+    if (visited[symbol - 'A']) return; 
+    visited[symbol - 'A'] = 1;         
 
     for (int i = 0; i < numProductions; i++) {
         if (productions[i][0] == symbol) {
             char* rhs = strchr(productions[i], '>') + 1;
 
-            int allNullable = 1; // Flag to check if all symbols in RHS can derive epsilon
+            int allNullable = 1; 
             for (int j = 0; rhs[j] != '\0'; j++) {
                 if (isTerminal(rhs[j])) {
                     addToSet(firstSets[symbol - 'A'], rhs[j]);
@@ -66,23 +66,23 @@ void computeFirst(char symbol) {
                 }
             }
 
-            // If all symbols in RHS can derive epsilon, add epsilon to First(symbol)
+            
             if (allNullable) {
                 addToSet(firstSets[symbol - 'A'], '#');
             }
         }
     }
 
-    visited[symbol - 'A'] = 0; // Mark symbol as unvisited for other computations
+    visited[symbol - 'A'] = 0; 
 }
 
-int followVisited[26]; // To track if a symbol's Follow set is being computed
+int followVisited[26]; 
 
 void computeFollow(char symbol) {
-    if (followVisited[symbol - 'A']) return; // Avoid infinite recursion
-    followVisited[symbol - 'A'] = 1;         // Mark symbol as visited
+    if (followVisited[symbol - 'A']) return; 
+    followVisited[symbol - 'A'] = 1;         
 
-    if (symbol == productions[0][0]) { // Add '$' to the start symbol's Follow set
+    if (symbol == productions[0][0]) { 
         addToSet(followSets[symbol - 'A'], '$');
     }
 
@@ -91,7 +91,7 @@ void computeFollow(char symbol) {
 
         for (int j = 0; rhs[j] != '\0'; j++) {
             if (rhs[j] == symbol) {
-                if (rhs[j + 1] != '\0') { // If there's a symbol after the current one
+                if (rhs[j + 1] != '\0') { 
                     char nextSymbol = rhs[j + 1];
                     if (isTerminal(nextSymbol)) {
                         addToSet(followSets[symbol - 'A'], nextSymbol);
@@ -103,7 +103,7 @@ void computeFollow(char symbol) {
                             }
                         }
 
-                        // If nextSymbol can derive epsilon, add Follow of LHS
+                        
                         if (strchr(firstSets[nextSymbol - 'A'], '#')) {
                             computeFollow(productions[i][0]);
                             for (int k = 0; followSets[productions[i][0] - 'A'][k] != '\0'; k++) {
@@ -111,7 +111,7 @@ void computeFollow(char symbol) {
                             }
                         }
                     }
-                } else { // If symbol is at the end of RHS, add Follow of LHS
+                } else { 
                     computeFollow(productions[i][0]);
                     for (int k = 0; followSets[productions[i][0] - 'A'][k] != '\0'; k++) {
                         addToSet(followSets[symbol - 'A'], followSets[productions[i][0] - 'A'][k]);
@@ -121,7 +121,7 @@ void computeFollow(char symbol) {
         }
     }
 
-    followVisited[symbol - 'A'] = 0; // Mark symbol as unvisited
+    followVisited[symbol - 'A'] = 0; 
 }
 
 
